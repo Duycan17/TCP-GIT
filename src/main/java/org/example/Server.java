@@ -2,31 +2,19 @@ package org.example;
 
 import java.io.*;
 import java.net.*;
+import java.util.Date;
+
+import static java.lang.Thread.sleep;
 
 public class Server {
-    public static void main(String[] args) {
-        try {
-            ServerSocket serverSocket = new ServerSocket(5111);
-            System.out.println("Server started. Waiting for a client...");
-
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("Client connected.");
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-
-            String message;
-            while ((message = in.readLine()) != null) {
-                System.out.println("Client: " + message);
-                out.println("Server received: " + message);
+    public static void main(String[] args) throws IOException, InterruptedException {
+        {
+            ServerSocket server = new ServerSocket(7001);
+            System.out.println("Server is started");
+            while(true) {
+                Socket socket = server.accept();
+                new ThreadHandler(socket).start();
             }
-
-            in.close();
-            out.close();
-            clientSocket.close();
-            serverSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
